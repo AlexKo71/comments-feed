@@ -5,6 +5,7 @@ const timeInputText = document.getElementById("time-input");
 const addFormButton = document.querySelector(".add-button");
 const lastDeleteComment = document.querySelector("last-delete-button");
 const listComments = document.querySelectorAll(".comment");
+// const editButtonElements = document.querySelectorAll(".edit-button");
 
 //Функция определения текущей даты времени:
 
@@ -27,6 +28,7 @@ const arrayComments = [
     commentText: "Это будет первый комментарий на этой странице",
     likesCounter: 3,
     isLike: false,
+    isEdit: false,
   },
   {
     name: "Варвара Н.",
@@ -34,15 +36,13 @@ const arrayComments = [
     commentText: "Мне нравится как оформлена эта страница! ❤",
     likesCounter: 75,
     isLike: true,
+    isEdit: false,
   },
 ];
 
-renderListComments();
-
-
 // событие на клик по кнопке "Написать"
 
-addFormButton.addEventListener("click", () => {
+const addEvent = addFormButton.addEventListener("click", () => {
   inputName.classList.remove("error");
   inputText.classList.remove("error");
   if (inputName.value === "") {
@@ -52,26 +52,15 @@ addFormButton.addEventListener("click", () => {
     inputText.classList.add("error");
     return;
   } else {
-    let oldComments = comments.innerHTML;
-    comments.innerHTML =
-      oldComments +
-      `<li class="comment">
-                  <div class="comment-header">
-                    <div>${inputName.value}</div>
-                    <div>${timeNow()}</div>
-                  </div>
-                  <div class="comment-body">
-                    <div class="comment-text">
-                      ${inputText.value}
-                    </div>
-                  </div>
-                  <div class="comment-footer">
-                    <div class="likes">
-                      <span class="likes-counter">0</span>
-                      <button class="like-button"></button>
-                    </div>
-                  </div>
-                </li>`;
+    arrayComments.push({
+      name: inputName.value,
+      time: timeNow(),
+      commentText: inputText.value,
+      likesCounter: "0",
+      isLike: false,
+    });
+
+    renderListComments();
     inputName.value = "";
     inputText.value = "";
   }
@@ -79,7 +68,7 @@ addFormButton.addEventListener("click", () => {
 
 // добавление, удаление лайков
 
-function likeDislike() {
+const likeDislike = () => {
   const likeButtonElements = document.querySelectorAll(".like-button");
 
   for (const likeButtonElement of likeButtonElements) {
@@ -89,17 +78,16 @@ function likeDislike() {
       console.log(index);
       if (likeButtonElement.classList.contains("-active-like")) {
         arrayComments[index].isLike = true;
-        arrayComments[index].likesCounter += 1;
+        arrayComments[index].likesCounter++;
       } else {
         arrayComments[index].isLike = false;
-        arrayComments[index].likesCounter -= 1;
+        arrayComments[index].likesCounter--;
       }
       renderListComments();
       console.log(arrayComments[index].likesCounter);
     });
   }
-}
-
+};
 
 // обновление списка - рендеринг
 
@@ -117,6 +105,8 @@ function renderListComments() {
             </div>
           </div>
           <div class="comment-footer">
+           <div class="edit-button">
+           <button class="add-form-button">Редактировать</button></div>
             <div class="likes">
               <span class="likes-counter">${comment.likesCounter}</span>
               <button data-index="${index}" class="like-button ${
@@ -129,6 +119,20 @@ function renderListComments() {
     .join("");
 
   likeDislike();
+  deleteComment();
+}
+
+// редактирование комментария
+
+function deleteComment() {
+  const editButtonElements = document.querySelectorAll(".edit-button");
+  for (const editButtonElement of editButtonElements) {
+    const nextElement = editButtonElement.nextElementSibling.lastElementChild;
+    editButtonElement.addEventListener("click", () => {
+      console.log(nextElement.dataset.index);
+      
+    });
+  }
 }
 
 renderListComments();
