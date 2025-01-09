@@ -89,6 +89,17 @@ const likeDislike = () => {
   }
 };
 
+// отзыв к комметарию
+
+const feedbackToComment = () => {
+  const commentTextElements = document.querySelectorAll(".comment-text");
+  for (const commentTextElement of commentTextElements) {
+    commentTextElement.addEventListener("click", () => {
+      console.log(commentTextElement.commentText);
+    });
+  }
+};
+
 // обновление списка - рендеринг
 
 function renderListComments() {
@@ -119,20 +130,38 @@ function renderListComments() {
     .join("");
 
   likeDislike();
-  deleteComment();
+  editComment();
+  console.log(arrayComments);
+  console.table(arrayComments);
 }
 
 // редактирование комментария
 
-function deleteComment() {
+function editComment() {
   const editButtonElements = document.querySelectorAll(".edit-button");
+  const listComments = document.querySelectorAll(".comment");
+  
   for (const editButtonElement of editButtonElements) {
     const nextElement = editButtonElement.nextElementSibling.lastElementChild;
+    const index = nextElement.dataset.index;
+    const commentTextElement =
+      listComments[index].querySelector(".comment-text");
     editButtonElement.addEventListener("click", () => {
-      console.log(nextElement.dataset.index);
-      
+      if (editButtonElement.firstElementChild.textContent === "Редактировать") {
+        editButtonElement.firstElementChild.textContent = "Сохранить";
+        const editCommentElement = document.createElement("textarea");
+        editCommentElement.classList.add("add-form-text");
+        editCommentElement.textContent = `${arrayComments[index].commentText}`;
+        editCommentElement.setAttribute("cols", 50);
+        commentTextElement.replaceWith(editCommentElement);
+      } else {
+        console.log(commentTextElement);
+        arrayComments[index].commentText += ` ${commentTextElement.value}`;
+        renderListComments();
+      }
     });
   }
 }
 
 renderListComments();
+feedbackToComment();

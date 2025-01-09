@@ -62,6 +62,7 @@ body {
 
   .comment-text {
     font-size: 32px;
+    white-space: pre-line;
   }
 
   .likes {
@@ -114,7 +115,7 @@ body {
   .add-form-text {
     margin-top: 12px;
     padding: 22px;
-    resize: none;
+    resize: both;
   }
 
   .add-form-row {
