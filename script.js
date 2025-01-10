@@ -5,7 +5,7 @@ const timeInputText = document.getElementById("time-input");
 const addFormButton = document.querySelector(".add-button");
 const lastDeleteComment = document.querySelector("last-delete-button");
 const listComments = document.querySelectorAll(".comment");
-// const editButtonElements = document.querySelectorAll(".edit-button");
+const buttonDeleteLastComment = document.querySelector(".last-delete-button");
 
 //Функция определения текущей даты времени:
 
@@ -42,31 +42,40 @@ const arrayComments = [
 
 // событие на клик по кнопке "Написать"
 
-const addEvent = () => {
-  addFormButton.addEventListener("click", () => {
-    inputName.classList.remove("error");
-    inputText.classList.remove("error");
-    if (inputName.value === "") {
-      inputName.classList.add("error");
-      return;
-    } else if (inputText.value === "") {
-      inputText.classList.add("error");
-      return;
-    } else {
-      arrayComments.push({
-        name: inputName.value,
-        time: timeNow(),
-        commentText: inputText.value,
-        likesCounter: "0",
-        isLike: false,
-      });
-  
-      renderListComments();
-      inputName.value = "";
-      inputText.value = "";
-    }
-  });
-} 
+const addEvent = addFormButton.addEventListener("click", () => {
+  inputName.classList.remove("error");
+  inputText.classList.remove("error");
+  if (inputName.value === "") {
+    inputName.classList.add("error");
+    return;
+  } else if (inputText.value === "") {
+    inputText.classList.add("error");
+    return;
+  } else {
+    arrayComments.push({
+      name: inputName.value,
+      time: timeNow(),
+      commentText: inputText.value,
+      likesCounter: "0",
+      isLike: false,
+    });
+
+    renderListComments();
+    inputName.value = "";
+    inputText.value = "";
+  }
+});
+
+// событие на клик по кнопке "Удалить последний комментарий"
+
+const deleteLastComment = buttonDeleteLastComment.addEventListener(
+  "click",
+  () => {
+    let lastElement = arrayComments.pop();
+    renderListComments();
+    console.log(lastElement);
+  }
+);
 
 // добавление, удаление лайков
 
@@ -92,19 +101,19 @@ const likeDislike = () => {
   }
 };
 
-// отзыв к комметарию 
+// отзыв к комметарию
 
-const feedbackToComment = () => {
+function feedbackToComment() {
   const commentTextElements = document.querySelectorAll(".comment");
   for (const commentTextElement of commentTextElements) {
+    const index = commentTextElement.dataset.index;
     commentTextElement.addEventListener("click", () => {
-      const index = commentTextElement.dataset.index;
       oldCommonText = arrayComments[index].commentText;
       inputText.textContent = oldCommonText;
-      addEvent();
+      console.log(index);
     });
   }
-};
+}
 
 // обновление списка - рендеринг
 
@@ -123,7 +132,6 @@ function renderListComments() {
           </div>
           <div class="comment-footer">
            <div class="edit-button">
-           <button class="add-form-button">Редактировать</button></div>
             <div class="likes">
               <span class="likes-counter">${comment.likesCounter}</span>
               <button data-index="${index}" class="like-button ${
@@ -136,40 +144,7 @@ function renderListComments() {
     .join("");
 
   likeDislike();
-  editComment();
   feedbackToComment();
 }
 
-// редактирование комментария
-
-function editComment() {
-  const editButtonElements = document.querySelectorAll(".edit-button");
-  const listComments = document.querySelectorAll(".comment");
-
-  for (const editButtonElement of editButtonElements) {
-    const nextElement = editButtonElement.nextElementSibling.lastElementChild;
-    const index = nextElement.dataset.index;
-    const commentTextElement =
-      listComments[index].querySelector(".comment-text");
-    editButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation();
-      if (editButtonElement.firstElementChild.textContent === "Редактировать") {
-        editButtonElement.firstElementChild.textContent = "Сохранить";
-        const editCommentElement = document.createElement("textarea");
-        editCommentElement.classList.add("add-form-text");
-        editCommentElement.textContent = `${arrayComments[index].commentText}`;
-        editCommentElement.setAttribute("cols", 50);
-        commentTextElement.replaceWith(editCommentElement);
-      } else {
-        console.log(commentTextElement);
-        arrayComments[index].commentText += `1 ${commentTextElement.value}`;
-        renderListComments();
-      }
-    });
-  }
-}
-
-
 renderListComments();
-
-
