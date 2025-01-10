@@ -42,29 +42,31 @@ const arrayComments = [
 
 // событие на клик по кнопке "Написать"
 
-const addEvent = addFormButton.addEventListener("click", () => {
-  inputName.classList.remove("error");
-  inputText.classList.remove("error");
-  if (inputName.value === "") {
-    inputName.classList.add("error");
-    return;
-  } else if (inputText.value === "") {
-    inputText.classList.add("error");
-    return;
-  } else {
-    arrayComments.push({
-      name: inputName.value,
-      time: timeNow(),
-      commentText: inputText.value,
-      likesCounter: "0",
-      isLike: false,
-    });
-
-    renderListComments();
-    inputName.value = "";
-    inputText.value = "";
-  }
-});
+const addEvent = () => {
+  addFormButton.addEventListener("click", () => {
+    inputName.classList.remove("error");
+    inputText.classList.remove("error");
+    if (inputName.value === "") {
+      inputName.classList.add("error");
+      return;
+    } else if (inputText.value === "") {
+      inputText.classList.add("error");
+      return;
+    } else {
+      arrayComments.push({
+        name: inputName.value,
+        time: timeNow(),
+        commentText: inputText.value,
+        likesCounter: "0",
+        isLike: false,
+      });
+  
+      renderListComments();
+      inputName.value = "";
+      inputText.value = "";
+    }
+  });
+} 
 
 // добавление, удаление лайков
 
@@ -72,7 +74,8 @@ const likeDislike = () => {
   const likeButtonElements = document.querySelectorAll(".like-button");
 
   for (const likeButtonElement of likeButtonElements) {
-    likeButtonElement.addEventListener("click", () => {
+    likeButtonElement.addEventListener("click", (event) => {
+      event.stopPropagation();
       likeButtonElement.classList.toggle("-active-like");
       const index = likeButtonElement.dataset.index;
       console.log(index);
@@ -89,13 +92,16 @@ const likeDislike = () => {
   }
 };
 
-// отзыв к комметарию
+// отзыв к комметарию 
 
 const feedbackToComment = () => {
-  const commentTextElements = document.querySelectorAll(".comment-text");
+  const commentTextElements = document.querySelectorAll(".comment");
   for (const commentTextElement of commentTextElements) {
     commentTextElement.addEventListener("click", () => {
-      console.log(commentTextElement.commentText);
+      const index = commentTextElement.dataset.index;
+      oldCommonText = arrayComments[index].commentText;
+      inputText.textContent = oldCommonText;
+      addEvent();
     });
   }
 };
@@ -105,7 +111,7 @@ const feedbackToComment = () => {
 function renderListComments() {
   comments.innerHTML = arrayComments
     .map((comment, index) => {
-      return `<li class="comment">
+      return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.time}</div>
@@ -131,8 +137,7 @@ function renderListComments() {
 
   likeDislike();
   editComment();
-  console.log(arrayComments);
-  console.table(arrayComments);
+  feedbackToComment();
 }
 
 // редактирование комментария
@@ -140,13 +145,14 @@ function renderListComments() {
 function editComment() {
   const editButtonElements = document.querySelectorAll(".edit-button");
   const listComments = document.querySelectorAll(".comment");
-  
+
   for (const editButtonElement of editButtonElements) {
     const nextElement = editButtonElement.nextElementSibling.lastElementChild;
     const index = nextElement.dataset.index;
     const commentTextElement =
       listComments[index].querySelector(".comment-text");
-    editButtonElement.addEventListener("click", () => {
+    editButtonElement.addEventListener("click", (event) => {
+      event.stopPropagation();
       if (editButtonElement.firstElementChild.textContent === "Редактировать") {
         editButtonElement.firstElementChild.textContent = "Сохранить";
         const editCommentElement = document.createElement("textarea");
@@ -156,12 +162,14 @@ function editComment() {
         commentTextElement.replaceWith(editCommentElement);
       } else {
         console.log(commentTextElement);
-        arrayComments[index].commentText += ` ${commentTextElement.value}`;
+        arrayComments[index].commentText += `1 ${commentTextElement.value}`;
         renderListComments();
       }
     });
   }
 }
 
+
 renderListComments();
-feedbackToComment();
+
+
