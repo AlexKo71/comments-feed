@@ -13,6 +13,7 @@ function timeNow() {
   const currentDate = new Date();
   const optionsDate = { year: "2-digit", month: "numeric", day: "numeric" };
   const optionsTime = { hour: "2-digit", minute: "2-digit" };
+  
   return `${currentDate.toLocaleDateString(
     "ru-Ru",
     optionsDate
@@ -45,6 +46,7 @@ const arrayComments = [
 const addEvent = addFormButton.addEventListener("click", () => {
   inputName.classList.remove("error");
   inputText.classList.remove("error");
+
   if (inputName.value === "") {
     inputName.classList.add("error");
     return;
@@ -73,7 +75,6 @@ const deleteLastComment = buttonDeleteLastComment.addEventListener(
   () => {
     let lastElement = arrayComments.pop();
     renderListComments();
-    console.log(lastElement);
   }
 );
 
@@ -96,21 +97,20 @@ const likeDislike = () => {
         arrayComments[index].likesCounter--;
       }
       renderListComments();
-      console.log(arrayComments[index].likesCounter);
     });
   }
 };
 
 // отзыв к комметарию
 
-function feedbackToComment() {
+const feedbackToComment = () => {
   const commentTextElements = document.querySelectorAll(".comment");
+
   for (const commentTextElement of commentTextElements) {
     const index = commentTextElement.dataset.index;
     commentTextElement.addEventListener("click", () => {
-      oldCommonText = arrayComments[index].commentText;
-      inputText.textContent = oldCommonText;
-      console.log(index);
+      inputText.value =  `< ${arrayComments[index].commentText} (${arrayComments[index].name})`;
+      renderListComments();
     });
   }
 }
