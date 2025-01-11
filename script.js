@@ -13,7 +13,7 @@ function timeNow() {
   const currentDate = new Date();
   const optionsDate = { year: "2-digit", month: "numeric", day: "numeric" };
   const optionsTime = { hour: "2-digit", minute: "2-digit" };
-  
+
   return `${currentDate.toLocaleDateString(
     "ru-Ru",
     optionsDate
@@ -55,9 +55,19 @@ const addEvent = addFormButton.addEventListener("click", () => {
     return;
   } else {
     arrayComments.push({
-      name: inputName.value,
+      name: inputName.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&prime;"),
       time: timeNow(),
-      commentText: inputText.value,
+      commentText: inputText.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&prime;"),
       likesCounter: "0",
       isLike: false,
     });
@@ -109,11 +119,11 @@ const feedbackToComment = () => {
   for (const commentTextElement of commentTextElements) {
     const index = commentTextElement.dataset.index;
     commentTextElement.addEventListener("click", () => {
-      inputText.value =  `< ${arrayComments[index].commentText} (${arrayComments[index].name})`;
+      inputText.value = `< ${arrayComments[index].commentText} (${arrayComments[index].name})`;
       renderListComments();
     });
   }
-}
+};
 
 // обновление списка - рендеринг
 
