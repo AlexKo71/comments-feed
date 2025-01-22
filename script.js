@@ -9,37 +9,69 @@ const buttonDeleteLastComment = document.querySelector(".last-delete-button");
 
 //Функция определения текущей даты времени:
 
-function timeNow() {
-  const currentDate = new Date();
-  const optionsDate = { year: "2-digit", month: "numeric", day: "numeric" };
-  const optionsTime = { hour: "2-digit", minute: "2-digit" };
+const currentDate = new Date();
+const optionsDate = { year: "2-digit", month: "numeric", day: "numeric" };
+const optionsTime = { hour: "2-digit", minute: "2-digit" };
 
-  return `${currentDate.toLocaleDateString(
+function formatTime(date) {
+  return `${date.toLocaleDateString(
     "ru-Ru",
     optionsDate
-  )} ${currentDate.toLocaleTimeString("ru-RU", optionsTime)}`;
+  )} ${date.toLocaleTimeString("ru-RU", optionsTime)}`;
 }
 
 // массив данных
 
-const arrayComments = [
-  {
-    name: "Глеб Фокин",
-    time: "12.02.22 12:18",
-    commentText: "Это будет первый комментарий на этой странице",
-    likesCounter: 3,
-    isLike: false,
-    isEdit: false,
-  },
-  {
-    name: "Варвара Н.",
-    time: "13.02.22 19:22",
-    commentText: "Мне нравится как оформлена эта страница! ❤",
-    likesCounter: 75,
-    isLike: true,
-    isEdit: false,
-  },
-];
+// const arrayComments = [
+//   {
+//     name: "Глеб Фокин",
+//     time: "12.02.22 12:18",
+//     commentText: "Это будет первый комментарий на этой странице",
+//     likesCounter: 3,
+//     isLike: false,
+//     isEdit: false,
+//   },
+//   {
+//     name: "Варвара Н.",
+//     time: "13.02.22 19:22",
+//     commentText: "Мне нравится как оформлена эта страница! ❤",
+//     likesCounter: 75,
+//     isLike: true,
+//     isEdit: false,
+//   },
+// ];
+
+let arrayComments = [];
+
+// Запросы в API
+
+function fetchGetData() {
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+    method: "GET",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      console.log(responseData);
+      return responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          time: formatTime(new Date(comment.date)),
+          commentText: comment.text,
+          likesCounter: comment.likes,
+          isLiked: false,
+          isEdit: false,
+        };
+      });
+    })
+    .then((responseData) => {
+      arrayComments = responseData;
+      renderListComments();
+    });
+}
+
+fetchGetData();
 
 // событие на клик по кнопке "Написать"
 
@@ -54,43 +86,43 @@ const addEvent = addFormButton.addEventListener("click", () => {
     inputText.classList.add("error");
     return;
   } else {
-    arrayComments.push({
-      name: inputName.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&prime;"),
-      time: timeNow(),
-      commentText: inputText.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&prime;"),
-      likesCounter: "0",
-      isLike: false,
+    return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: inputText.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&prime;"),
+        name: inputName.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&prime;"),
+      }),
+    }).then((response) => {
+      fetchGetData();
+      inputName.value = "";
+      inputText.value = "";
     });
-
-    renderListComments();
-    inputName.value = "";
-    inputText.value = "";
   }
 });
 
 // событие на клик по кнопке "Удалить последний комментарий"
 
-const deleteLastComment = buttonDeleteLastComment.addEventListener(
-  "click",
-  () => {
-    let lastElement = arrayComments.pop();
-    renderListComments();
-  }
-);
+// const deleteLastComment = buttonDeleteLastComment.addEventListener(
+//   "click",
+//   () => {
+//     let lastElement = arrayComments.pop();
+//     renderListComments();
+//   }
+// );
 
 // добавление, удаление лайков
 
-const likeDislike = () => {
+function likeDislike() {
   const likeButtonElements = document.querySelectorAll(".like-button");
 
   for (const likeButtonElement of likeButtonElements) {
@@ -109,11 +141,11 @@ const likeDislike = () => {
       renderListComments();
     });
   }
-};
+}
 
 // отзыв к комметарию
 
-const feedbackToComment = () => {
+function feedbackToComment() {
   const commentTextElements = document.querySelectorAll(".comment");
 
   for (const commentTextElement of commentTextElements) {
@@ -123,7 +155,7 @@ const feedbackToComment = () => {
       renderListComments();
     });
   }
-};
+}
 
 // обновление списка - рендеринг
 
@@ -142,6 +174,7 @@ function renderListComments() {
           </div>
           <div class="comment-footer">
            <div class="edit-button">
+           <button class="add-form-button">Редактировать</button></div>
             <div class="likes">
               <span class="likes-counter">${comment.likesCounter}</span>
               <button data-index="${index}" class="like-button ${
@@ -155,6 +188,7 @@ function renderListComments() {
 
   likeDislike();
   feedbackToComment();
+  console.log("Render");
 }
 
 renderListComments();
