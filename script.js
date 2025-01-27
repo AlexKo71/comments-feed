@@ -6,6 +6,10 @@ const addFormButton = document.querySelector(".add-button");
 const lastDeleteComment = document.querySelector("last-delete-button");
 const listComments = document.querySelectorAll(".comment");
 const buttonDeleteLastComment = document.querySelector(".last-delete-button");
+let loadingLike = false;
+let isLoading = false;
+const addFormElement = document.querySelector(".add-form");
+const infoDownLoadElement = document.querySelector(".comments-info-download");
 
 //Функция определения текущей даты времени:
 
@@ -43,17 +47,21 @@ function formatTime(date) {
 
 let arrayComments = [];
 
-// Запросы в API
+delay().then(() => {
+  comments.textContent = "Пожалуйста подождите, комментарии загружаются...";
+});
 
 function fetchGetData() {
-  return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
-    method: "GET",
-  })
+  delay(3000)
+    .then(() => {
+      return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+        method: "GET",
+      });
+    })
     .then((response) => {
       return response.json();
     })
     .then((responseData) => {
-      console.log(responseData);
       return responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
@@ -86,6 +94,8 @@ const addEvent = addFormButton.addEventListener("click", () => {
     inputText.classList.add("error");
     return;
   } else {
+    addFormElement.style.display = "none";
+    infoDownLoadElement.style.display = "block";
     return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
       method: "POST",
       body: JSON.stringify({
@@ -102,11 +112,20 @@ const addEvent = addFormButton.addEventListener("click", () => {
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&prime;"),
       }),
-    }).then((response) => {
-      fetchGetData();
-      inputName.value = "";
-      inputText.value = "";
-    });
+    })
+      .then((response) => {
+        return fetchGetData();
+      })
+      .then((data) => {
+        return new Promise(() => {
+          delay(3000).then(() => {
+            addFormElement.style.display = "flex";
+            infoDownLoadElement.style.display = "none";
+            inputName.value = "";
+            inputText.value = "";
+          });
+        });
+      });
   }
 });
 
@@ -129,8 +148,9 @@ function likeDislike() {
     likeButtonElement.addEventListener("click", (event) => {
       event.stopPropagation();
       likeButtonElement.classList.toggle("-active-like");
+      loadingLike = true;
+
       const index = likeButtonElement.dataset.index;
-      console.log(index);
       if (likeButtonElement.classList.contains("-active-like")) {
         arrayComments[index].isLike = true;
         arrayComments[index].likesCounter++;
@@ -179,7 +199,7 @@ function renderListComments() {
               <span class="likes-counter">${comment.likesCounter}</span>
               <button data-index="${index}" class="like-button ${
         comment.isLike ? "-active-like" : ""
-      }"></button>
+      } ${loadingLike ? "-loading-like" : ""}"></button>
             </div>
           </div>
         </li>`;
@@ -188,7 +208,14 @@ function renderListComments() {
 
   likeDislike();
   feedbackToComment();
-  console.log("Render");
+}
+
+function delay(interval = 2000) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
 }
 
 renderListComments();
