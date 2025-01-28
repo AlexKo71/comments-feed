@@ -7,9 +7,11 @@ const lastDeleteComment = document.querySelector("last-delete-button");
 const listComments = document.querySelectorAll(".comment");
 const buttonDeleteLastComment = document.querySelector(".last-delete-button");
 let loadingLike = false;
-let isLoading = false;
 const addFormElement = document.querySelector(".add-form");
 const infoDownLoadElement = document.querySelector(".comments-info-download");
+
+const nameValue = inputName.value;
+const textValue = inputText.value;
 
 //Функция определения текущей даты времени:
 
@@ -23,27 +25,6 @@ function formatTime(date) {
     optionsDate
   )} ${date.toLocaleTimeString("ru-RU", optionsTime)}`;
 }
-
-// массив данных
-
-// const arrayComments = [
-//   {
-//     name: "Глеб Фокин",
-//     time: "12.02.22 12:18",
-//     commentText: "Это будет первый комментарий на этой странице",
-//     likesCounter: 3,
-//     isLike: false,
-//     isEdit: false,
-//   },
-//   {
-//     name: "Варвара Н.",
-//     time: "13.02.22 19:22",
-//     commentText: "Мне нравится как оформлена эта страница! ❤",
-//     likesCounter: 75,
-//     isLike: true,
-//     isEdit: false,
-//   },
-// ];
 
 let arrayComments = [];
 
@@ -87,46 +68,54 @@ const addEvent = addFormButton.addEventListener("click", () => {
   inputName.classList.remove("error");
   inputText.classList.remove("error");
 
-  if (inputName.value === "") {
-    inputName.classList.add("error");
-    return;
-  } else if (inputText.value === "") {
-    inputText.classList.add("error");
-    return;
-  } else {
-    addFormElement.style.display = "none";
-    infoDownLoadElement.style.display = "block";
-    return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        text: inputText.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&prime;"),
-        name: inputName.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&prime;"),
-      }),
+  try {
+    if (inputName.value.length < 3) {
+      inputName.classList.add("error");
+      throw new SyntaxError(
+        console.log("В поле 'Введите ваше имя' введено меньше 3 символов")
+      );
+    } else if (inputText.value.length < 3) {
+      inputText.classList.add("error");
+      throw new SyntaxError(
+        console.log("В поле 'Введите ваше имя' введено меньше 3 символов")
+      );
+    }
+  } catch (error) {
+    alert("Введено меньше 3 символов");
+  }
+
+  addFormElement.style.display = "none";
+  infoDownLoadElement.style.display = "block";
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      text: inputText.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&prime;"),
+      name: inputName.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&prime;"),
+    }),
+  })
+    .then((response) => {
+      return fetchGetData();
     })
-      .then((response) => {
-        return fetchGetData();
-      })
-      .then((data) => {
-        return new Promise(() => {
-          delay(3000).then(() => {
-            addFormElement.style.display = "flex";
-            infoDownLoadElement.style.display = "none";
-            inputName.value = "";
-            inputText.value = "";
-          });
+    .then((data) => {
+      return new Promise(() => {
+        delay(3000).then(() => {
+          addFormElement.style.display = "flex";
+          infoDownLoadElement.style.display = "none";
+          inputName.value = "";
+          inputText.value = "";
         });
       });
-  }
+    });
 });
 
 // событие на клик по кнопке "Удалить последний комментарий"
