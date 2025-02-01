@@ -10,9 +10,6 @@ let loadingLike = false;
 const addFormElement = document.querySelector(".add-form");
 const infoDownLoadElement = document.querySelector(".comments-info-download");
 
-const nameValue = inputName.value;
-const textValue = inputText.value;
-
 //Функция определения текущей даты времени:
 
 const currentDate = new Date();
@@ -69,12 +66,12 @@ const addEvent = addFormButton.addEventListener("click", () => {
   inputText.classList.remove("error");
 
   try {
-    if (inputName.value.length < 3) {
+    if (inputName.value.trim().length < 3) {
       inputName.classList.add("error");
       throw new SyntaxError(
         console.log("В поле 'Введите ваше имя' введено меньше 3 символов")
       );
-    } else if (inputText.value.length < 3) {
+    } else if (inputText.value.trim().length < 3) {
       inputText.classList.add("error");
       throw new SyntaxError(
         console.log("В поле 'Введите ваше имя' введено меньше 3 символов")
@@ -84,49 +81,8 @@ const addEvent = addFormButton.addEventListener("click", () => {
     alert("Введено меньше 3 символов");
   }
 
-  addFormElement.style.display = "none";
-  infoDownLoadElement.style.display = "block";
-  return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      text: inputText.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&prime;"),
-      name: inputName.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&prime;"),
-    }),
-  })
-    .then((response) => {
-      return fetchGetData();
-    })
-    .then((data) => {
-      return new Promise(() => {
-        delay(3000).then(() => {
-          addFormElement.style.display = "flex";
-          infoDownLoadElement.style.display = "none";
-          inputName.value = "";
-          inputText.value = "";
-        });
-      });
-    });
+  postApi();
 });
-
-// событие на клик по кнопке "Удалить последний комментарий"
-
-// const deleteLastComment = buttonDeleteLastComment.addEventListener(
-//   "click",
-//   () => {
-//     let lastElement = arrayComments.pop();
-//     renderListComments();
-//   }
-// );
 
 // добавление, удаление лайков
 
@@ -182,8 +138,6 @@ function renderListComments() {
             </div>
           </div>
           <div class="comment-footer">
-           <div class="edit-button">
-           <button class="add-form-button">Редактировать</button></div>
             <div class="likes">
               <span class="likes-counter">${comment.likesCounter}</span>
               <button data-index="${index}" class="like-button ${
@@ -205,6 +159,63 @@ function delay(interval = 2000) {
       resolve();
     }, interval);
   });
+}
+
+// функция запроса РОST
+
+function postApi() {
+  const namePerson = inputName.value.trim();
+  const commentText = inputText.value.trim();
+  console.log(namePerson, commentText);
+
+  addFormElement.style.display = "none";
+  infoDownLoadElement.style.display = "block";
+  return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      text: inputText.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&prime;"),
+      name: inputName.value
+        .trim()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&prime;"),
+      forceError: true,
+    }),
+  })
+    .then((response) => {
+      if (response.status === 500) {
+        return new Promise.reject(new Error("Сервер недоступен"));
+      } else {
+        return fetchGetData();
+      }
+    })
+    .then((data) => {
+      return new Promise(() => {
+        delay(3000).then(() => {
+          addFormElement.style.display = "flex";
+          infoDownLoadElement.style.display = "none";
+          inputName.value = "";
+          inputText.value = "";
+        });
+      });
+    })
+    .catch((error) => {
+      alert("Сервер сломался, попробуйте позже");
+      console.log("Error name:", error.name);
+    })
+    .finally(() => {
+      postApi();
+      // addFormElement.style.display = "flex";
+      // infoDownLoadElement.style.display = "none";
+      renderListComments();
+    });
 }
 
 renderListComments();

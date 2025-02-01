@@ -71,7 +71,7 @@ body {
 
 .comment-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .comment-body {
