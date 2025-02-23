@@ -8,10 +8,9 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-       <!-- Список рендерится из JS -->
-      </ul>
-      <div class="add-form">
+      <ul class="comments"></ul>
+
+      <div class="add-form hide">
         <input
           type="text"
           class="add-form-name"
@@ -29,7 +28,11 @@
        
       <p></p>
     </div>
-     <div class="comments-info-download">"Комментарий загружается..."</div>
+
+      <div class="add-form login-form hide"></div>
+      <div class="add-form registration-form hide"></div>
+      <div id="first-page"></div>
+
   </body>
 
   <script type="module" src="main.js"></script>

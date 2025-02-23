@@ -1,14 +1,11 @@
 import { getApi } from "./api.js";
-import { renderListComments } from "./renderTask.js";
+import { renderListComments, comments } from "./renderTask.js";
 import { delay } from "./delay.js";
 import { addComment } from "./commentEditor.js";
+import { renderFirstpage } from "./firstPage.js";
 
-const comments = document.querySelector(".comments");
+// getApi();
+// renderListComments();
+// addComment();
 
-delay().then(() => {
-  comments.textContent = "Пожалуйста подождите, комментарии загружаются...";
-});
-
-getApi();
-renderListComments();
-addComment();
+renderFirstpage();

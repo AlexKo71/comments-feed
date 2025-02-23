@@ -33,3 +33,5 @@ export function renderListComments() {
   likeDislike(loadingLike);
   feedbackToComment();
 }
+
+export { comments };

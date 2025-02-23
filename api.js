@@ -6,12 +6,17 @@ import { inputName, inputText } from "./commentEditor.js";
 const addFormElement = document.querySelector(".add-form");
 const infoDownLoadElement = document.querySelector(".comments-info-download");
 let arrayComments = [];
+const webdevUrl = "https://webdev-hw-api.vercel.app/api/v2/alex-ko";
+export let token;
 
 function getApi() {
   delay(3000)
     .then(() => {
-      return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+      return fetch(`${webdevUrl}/comments`, {
         method: "GET",
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
     })
     .then((response) => {
@@ -38,7 +43,7 @@ function getApi() {
 function postApi() {
   addFormElement.style.display = "none";
   infoDownLoadElement.style.display = "block";
-  return fetch("https://webdev-hw-api.vercel.app/api/v1/alex-ko/comments", {
+  return fetch("https://webdev-hw-api.vercel.app/api/v2/alex-ko/comments", {
     method: "POST",
     body: JSON.stringify({
       text: inputText.value
