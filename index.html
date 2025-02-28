@@ -10,13 +10,15 @@
     <div class="container">
       <ul class="comments"></ul>
 
-      <div id="add-comment-form" class="add-form hide"></div>
+      <form id="addCommentForm" class="add-form hide"></form>
 
-      <div class="add-form login-form hide"></div>
+      <form id="loginForm" action="/login"
+      method="post" class="add-form login-form hide" ></form>
 
-      <div class="add-form registration-form hide"></div>
+      <form id="registrationForm" action="/registration"
+      method="post" class="add-form registration-form hide" data-js-form></form>
 
-      <div id="first-page"></div>
+      <div id="firstPage"></div>
   </body>
 
   <script type="module" src="main.js"></script>

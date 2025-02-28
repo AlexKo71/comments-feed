@@ -1,8 +1,9 @@
-const addCommentFormElement = document.querySelector("#add-comment-form");
+const addCommentFormElement = document.querySelector("#addCommentForm");
 
 function renderAddCommentForm() {
   addCommentFormElement.innerHTML = `<input
           type="text"
+          name="name"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
@@ -16,3 +17,5 @@ function renderAddCommentForm() {
           <button class="add-form-button add-button">Написать</button>
         </div>`;
 }
+
+export { addCommentFormElement, renderAddCommentForm };

@@ -4,8 +4,12 @@ import {
   renderRegistrationForm,
   registrationFormElement,
 } from "./registrationForm.js";
+import { loginUser } from "./api.js";
+import { renderListComments } from "./renderTask.js";
+import { addCommentFormElement, renderAddCommentForm } from "./commentForm.js";
+import { addComment } from "./commentEditor.js";
 
-const loginFormElement = document.querySelector(".login-form");
+const loginFormElement = document.querySelector("#loginForm");
 
 function renderLoginForm() {
   loginFormElement.classList.remove("hide");
@@ -14,20 +18,24 @@ function renderLoginForm() {
   comments.classList.add("hide");
   loginFormElement.innerHTML = `<h2 class="add-form-title">Форма входа</h2>
        <input id="input-login"
-          type="text"
-          class="add-form-name input"
-          placeholder="Введите ваш логин"
+        type="text" name = "login"
+        class="add-form-name input" required
+        placeholder="Введите ваш логин"
+        minlength="3"
+        maxlength="12"
         />
         <input id="input-password"
-        type="text"
-        class="add-form-name input"
+        type="text" name = "password"
+        class="add-form-name input" required
         placeholder="Введите ваш пароль"
+        minlength="8"
+        maxlength="16"
       />
         <div class="add-form-row">
-          <button class="add-form-button button-wide">Войти</button>
+        <button id="entranceButton" type="submit" class="add-form-button button-wide">Войти</button>
         </div>
         <p id="login-form-registration" class="registration-text">
-          <a href="#">Зарегистрироваться</a>
+        <a href="#">Зарегистрироваться</a>
         </p>`;
 
   const registrationTextElement = document.querySelector(
@@ -36,6 +44,24 @@ function renderLoginForm() {
 
   registrationTextElement.addEventListener("click", () => {
     renderRegistrationForm();
+  });
+
+  loginData();
+}
+
+function loginData() {
+  loginFormElement.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(loginFormElement);
+    console.log(Object.fromEntries(formData));
+    comments.classList.remove("hide");
+    addCommentFormElement.classList.remove("hide");
+    renderListComments();
+    renderAddCommentForm();
+    loginFormElement.classList.add("hide");
+    // addCommentFormElement.name.value = registrationFormElement.name.value;
+    addCommentFormElement.name.setAttribute("disabled", "");
   });
 }
 

@@ -5,7 +5,8 @@ const inputText = document.querySelector(".add-form-text");
 const addFormButton = document.querySelector(".add-button");
 
 function addComment() {
-  addFormButton.addEventListener("click", () => {
+  addFormButton.addEventListener("click", (event) => {
+    event.preventDefault();
     inputName.classList.remove("error");
     inputText.classList.remove("error");
 

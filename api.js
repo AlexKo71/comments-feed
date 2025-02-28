@@ -7,6 +7,7 @@ const addFormElement = document.querySelector(".add-form");
 const infoDownLoadElement = document.querySelector(".comments-info-download");
 let arrayComments = [];
 const webdevUrl = "https://webdev-hw-api.vercel.app/api/v2/alex-ko";
+const userUrl = "https://wedev-api.sky.pro/api/user/login";
 export let token;
 
 function getApi() {
@@ -14,9 +15,6 @@ function getApi() {
     .then(() => {
       return fetch(`${webdevUrl}/comments`, {
         method: "GET",
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
       });
     })
     .then((response) => {
@@ -89,4 +87,18 @@ function postApi() {
     });
 }
 
-export { getApi, postApi, arrayComments };
+function loginUser({ login, password }) {
+  addFormElement.style.display = "none";
+  infoDownLoadElement.style.display = "block";
+  return fetch(userUrl, {
+    method: "POST",
+    body: JSON.stringify({
+      login,
+      password,
+    }),
+  }).then((responseData) => {
+    console.log(responseData);
+  });
+}
+
+export { getApi, postApi, arrayComments, loginUser };
