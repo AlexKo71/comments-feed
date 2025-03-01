@@ -33,7 +33,7 @@ function renderRegistrationForm() {
         type="text" name = "password"
         class="add-form-name input"
         placeholder="Введите ваш пароль"
-        minlength="8"
+        minlength="4"
         maxlength="16"
         aria-errormessage="input-password-errors"
       />

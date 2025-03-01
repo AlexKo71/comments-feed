@@ -13,8 +13,7 @@ function renderFirstpage() {
   getApi();
   renderListComments();
 
-  firstPageElement.innerHTML = `<div class="authorization-start-text">Чтобы добавить комментарий, <span class="authorization-start-input">авторизуйтесь</span></div> 
-    <div class="comments-info-download">"Комментарий загружается..."</div>`;
+  firstPageElement.innerHTML = `<div class="authorization-start-text">Чтобы добавить комментарий, <span class="authorization-start-input">авторизуйтесь</span></div>`;
 
   const authorizationStartInputElement = document.querySelector(
     ".authorization-start-input"

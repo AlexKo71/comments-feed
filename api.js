@@ -4,7 +4,6 @@ import { formatTime } from "./time.js";
 import { inputName, inputText } from "./commentEditor.js";
 
 const addFormElement = document.querySelector(".add-form");
-const infoDownLoadElement = document.querySelector(".comments-info-download");
 let arrayComments = [];
 const webdevUrl = "https://webdev-hw-api.vercel.app/api/v2/alex-ko";
 const userUrl = "https://wedev-api.sky.pro/api/user/login";
@@ -40,8 +39,7 @@ function getApi() {
 
 function postApi() {
   addFormElement.style.display = "none";
-  infoDownLoadElement.style.display = "block";
-  return fetch("https://webdev-hw-api.vercel.app/api/v2/alex-ko/comments", {
+  return fetch("https://wedev-api.sky.pro/api/user/login", {
     method: "POST",
     body: JSON.stringify({
       text: inputText.value
@@ -71,7 +69,6 @@ function postApi() {
       return new Promise(() => {
         delay(3000).then(() => {
           addFormElement.style.display = "flex";
-          infoDownLoadElement.style.display = "none";
           inputName.value = "";
           inputText.value = "";
         });
@@ -89,7 +86,6 @@ function postApi() {
 
 function loginUser({ login, password }) {
   addFormElement.style.display = "none";
-  infoDownLoadElement.style.display = "block";
   return fetch(userUrl, {
     method: "POST",
     body: JSON.stringify({

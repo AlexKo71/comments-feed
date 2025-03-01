@@ -4,7 +4,7 @@ import {
   renderRegistrationForm,
   registrationFormElement,
 } from "./registrationForm.js";
-import { loginUser } from "./api.js";
+import { loginUser, postApi } from "./api.js";
 import { renderListComments } from "./renderTask.js";
 import { addCommentFormElement, renderAddCommentForm } from "./commentForm.js";
 import { addComment } from "./commentEditor.js";
@@ -28,9 +28,9 @@ function renderLoginForm() {
         type="text" name = "password"
         class="add-form-name input" required
         placeholder="Введите ваш пароль"
-        minlength="8"
+        minlength="4"
         maxlength="16"
-      />
+        />
         <div class="add-form-row">
         <button id="entranceButton" type="submit" class="add-form-button button-wide">Войти</button>
         </div>
@@ -62,6 +62,7 @@ function loginData() {
     loginFormElement.classList.add("hide");
     // addCommentFormElement.name.value = registrationFormElement.name.value;
     addCommentFormElement.name.setAttribute("disabled", "");
+    
   });
 }
 
